@@ -27,6 +27,58 @@ class TestAPI(unittest.TestCase):
         # Create folder for test uploads
         os.mkdir(upload_path())
 
+    def test_songs_get(self):
+        fileR = models.File(filename="red_song.mp3")
+        fileB = models.File(filename="blue_song.mp3")
+        session.add_all([fileR, fileB])
+
+        songR = models.Song(file=fileR)
+        songB = models.Song(file=fileB)
+        session.add_all([songR, songB])
+        session.commit()
+
+        response = self.client.get("/api/songs",
+            headers=[("Accept", "application/json")]
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, "application/json")
+
+        data = json.loads(response.data)
+
+        self.assertEqual(data[0]["file"]["id"], fileR.id)
+        self.assertEqual(urlparse(data[0]["file"]["path"]).path,
+                         "/uploads/red_song.mp3")
+
+        self.assertEqual(data[1]["file"]["id"], fileB.id)
+        self.assertEqual(urlparse(data[1]["file"]["path"]).path,
+                         "/uploads/blue_song.mp3")
+        
+    def test_song_post(self):
+        file = models.File(filename="green_song.mp3")
+        session.add(file)
+        session.commit()
+
+        data = {
+            "file": {
+                "id": file.id
+            }
+        }
+
+        response = self.client.post("/api/songs",
+            data=json.dumps(data),
+            content_type="application/json",
+            headers=[("Accept", "application/json")]
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.mimetype, "application/json")
+
+        data = json.loads(response.data)
+        self.assertEqual(data["file"]["id"], file.id)
+        self.assertEqual(urlparse(data["file"]["path"]).path,
+                         "/uploads/green_song.mp3")
+        
     def tearDown(self):
         """ Test teardown """
         session.close()
@@ -35,5 +87,3 @@ class TestAPI(unittest.TestCase):
 
         # Delete test upload folder
         shutil.rmtree(upload_path())
-
-
