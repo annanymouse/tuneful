@@ -99,9 +99,20 @@ def file_post():
 
     filename = secure_filename(file.filename)
     db_file = models.File(name=filename)
-    session.add(db_file)
+    db_song = models.Song(file=db_file)
+    session.add_all([db_file,db_song])    
     session.commit()
     file.save(upload_path(filename))
 
     data = db_file.as_dictionary()
     return Response(json.dumps(data), 201, mimetype="application/json")
+
+
+#     filename = secure_filename(file.filename)
+#     db_file = models.File(name=filename)
+#     session.add(db_file)
+#     session.commit()
+#     file.save(upload_path(filename))
+
+#     data = db_file.as_dictionary()
+#     return Response(json.dumps(data), 201, mimetype="application/json")
