@@ -1,6 +1,6 @@
 ####IMPORTANT INFO####
 
-If you are a thinkful student still using nitrous (like me), please note the maximum file size that can be uploaded is 2MB and the "chord.wav" file that they provide to use as an example is 8.5MB.
+If you are a thinkful student still using nitrous (like me), please note the maximum file size that can be uploaded is 2MB and the "chord.wav" file that they provide to use as an example is 8.5MB.  I used a smaller .mp3 file to test this out.  If you are using Cloud9 be mindful of their file size limit.
 
 Also, the file_post() function needs to be modified to create and commit a song to the database as well, otherwise you won't be able to play the song.
 
